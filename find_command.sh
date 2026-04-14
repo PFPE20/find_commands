@@ -7,6 +7,8 @@
 separator="^-{3,}"
 notes_file="/home/HellHound/myscripts/index.txt"
 
+size=($(stty size))
+rows=${size[0]}
 
 function search_pkg() {
 	
@@ -38,6 +40,13 @@ function search_pkg() {
 
 	block=$(grep --color=always -B "$lines_up" -A "$lines_down" -i "$term" "$notes_file")
 
+
+
+	if [[ $(echo "$block" | wc -l) -gt "$rows" ]]; then
+		echo "$block" | less -R
+		return
+	fi
+
 	echo "$block"
 
 }
@@ -65,7 +74,12 @@ function search_cmd() {
 
 	block=$(grep --color=never -B "$lines_up" -A "$lines_down" -i "$1" "$notes_file")
 
-	echo "$block" | less
+	if [[ $(echo "$block" | wc -l) -gt "$rows" ]]; then
+		echo "$block" | less -R
+		return
+	fi
+
+	echo "$block"
 
 }
 
@@ -89,14 +103,14 @@ while getopts ":c:k:" opt; do
 	case $opt in
 		k) 
 			if ! grep -qi "$OPTARG" "$notes_file"; then
-				echo -e "\n\t\e[1;31m[x]\e[0m  No se encontró \"\e[3;36m$1\e[0m\" en el índice\n"
+				echo -e "\n\t\e[1;31m[x]\e[0m  No se encontró \"\e[3;36m$2\e[0m\" en el índice\n"
 				exit 1
 			fi
 
 			search_pkg $OPTARG; exit 0;;
 		c) 
 			if ! grep -qi "$OPTARG" "$notes_file"; then
-				echo -e "\n\t\e[1;31m[x]\e[0m  No se encontró \"\e[3;36m$1\e[0m\" en el índice\n"
+				echo -e "\n\t\e[1;31m[x]\e[0m  No se encontró \"\e[3;36m$2\e[0m\" en el índice\n"
 				exit 1
 			fi
 			search_cmd $OPTARG; exit 0;;

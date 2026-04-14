@@ -39,6 +39,10 @@
 
 	python3 -c 'import urllib.parse; print(urllib.parse.unquote(<enter the input>))'
 
+5. Desencriptar un XOR encrypted:
+
+	python3 -c 'print("".join(chr(b ^ [HEX]) for b in <encrypted>))'
+
 ----------------------------------------------------------------------------------
 
 	"Netcat" - "nc"
@@ -69,7 +73,28 @@
 
 	"curl"
 
-1. Comprobar formularios:
+1. Flags:
+
+	-s: silent
+
+	-o: output file
+
+	-w: write-out in format → curl -w '%{response_code}\n' https://example.com
+
+		'%{response_code}'
+		'%{size_download}'
+
+	-H: Agregar header
+
+		Ej: curl -s -o /dev/null -w '%{http_code}\n %{size_download}\n' -H "Host: doesntexist.123.123.123.123" http://123.123.123.123
+
+	-I: Sólo headers
+
+		Si la solicitud no acepta "HEAD" se puede hacer:
+
+		curl -s -D - -o /dev/null http://wavefire.thm
+
+2. Comprobar formularios:
 
 	curl -s -X POST http://<IP>/ruta/ -d "user=admin&pass=wrongpassword"
 
@@ -101,6 +126,16 @@
 
 ----------------------------------------------------------------------------------
 
+	"tcpdump"
+
+1. Para escuchar los pings cuando se usa un túnel VPN:
+
+	tcpdump -i tun0 icmp	→ verificar siempre interfaz de la vpn (tun0)
+
+	tcpdump -i tun0 icmp -v	→ detallado
+
+----------------------------------------------------------------------------------
+
 	"SSH" (Protocolo - Puerto 22)
 
 1. Ya sabemos cómo entrar por el puerto 22 del protocolo SSH, sin embargo también hay una alternativa estando dentro de la máquina:
@@ -118,6 +153,10 @@
 	luego:
 
 	john --wordlist=/path/to/rockyou > rsa.cracked
+
+4. Crear una llave rsa:
+
+	ssh-keygen -t rsa
 
 ----------------------------------------------------------------------------------
 
@@ -201,9 +240,13 @@
         	↓
 	5. Obtener el contenido (credenciales, flags, etc.)
 
+4. Si se tiene una llave '.asc' se puede desencriptar con:
+
+	gpg --import [file.asc]
+
 ----------------------------------------------------------------------------------
 
-	"Searchexploit"
+	"searchsploit"
 
 1. Es una herramienta de línea de comandos que te permite buscar en la base de datos de Exploit-DB de forma offline. Permite buscar exploits, PoCs y shellcodes para un servicio o software concreto sin necesidad de conexión a internet, ya que la base de datos está almacenada localmente en tu máquina.
 
@@ -305,6 +348,22 @@
 
 ----------------------------------------------------------------------------------
 
+	"ffuf"
+
+1. Flags:
+
+	-w: Wordlist
+
+	-u: URL
+
+	-H: Header (para comprobar longitudes, status-code, etc)
+
+	-fs: file-size → Filtrar por longidtud de respuesta
+
+	-fc: file-code  → Filtrar por status-code
+
+----------------------------------------------------------------------------------
+
 	"hexeditor"
 
 1. Sólamente hay que llamar hexdump con el archivo que se quiera modificar
@@ -354,6 +413,14 @@
 	- pass: Depende del atributo 'name' del input de contraseña
 
 	- <Texto de fallo>: Texto que se debe poner cuando el formulario da fallos	
+
+---------------------------------------------------------------------------------
+
+	"wpscan"
+
+1. Wordpress security scanner
+
+2. Hacer 'man wpscan'
 
 ---------------------------------------------------------------------------------
 
@@ -407,6 +474,10 @@
 
 	stegseek -xf [archivo] → Este flag es cuando ya sabemos qué hay dentro
 
+3. Se puede pasar una lista (como rockyou) para el salvoconducto (passphrase):
+
+	stegseek [file] /usr/share/wordlist/rockyou.txt
+
 ---------------------------------------------------------------------------------
 
 	"openssl"
@@ -418,6 +489,19 @@
 2. Para descifrar archivos cifrados con RSA sin tener la llave pública pero si la privada:
 
 	openssl pkeyutl -decrypt -inkey <private_key_file> -in <cipher_file>
+
+3. Inspeccionar la clave pública:
+
+	openssl rsa -pubin -in key.pub -text -noout
+
+4. Inspeccionar los valores internos de la clave y decidir qué ataque aplicar:
+
+	openssl rsa -in key_rsa -text -noout
+
+		• rsa		→ opera sobre claves RSA
+		• -in key_rsa	→ archivo de entrada
+		• -text		→ muestra los componentes en formato legible
+		• -noout	→ no imprime en Base64, sólo texto. 
 
 ---------------------------------------------------------------------------------
 
