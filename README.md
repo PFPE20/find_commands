@@ -23,7 +23,7 @@ Cuando estoy practicando en plataformas como **TryHackme** y **PicoCTF**, acumul
 
 ```bash
 # Clonar el repositorio
-git clone <url>
+git clone https://github.com/PFPE20/find_commands.git
 cd find_comands
 
 # Dar permisos de ejecución
