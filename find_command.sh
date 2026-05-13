@@ -5,7 +5,7 @@
 # Script para buscar comando en index.txt
 
 separator="^-{3,}"
-notes_file="/home/HellHound/myscripts/index.txt"
+notes_file="$HOME/myscripts/findCommandsGit/index.txt"
 
 size=($(stty size))
 rows=${size[0]}
