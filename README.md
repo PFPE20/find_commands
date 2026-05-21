@@ -41,11 +41,12 @@ findcommands='ruta/al/script'
 ## Uso
 
 ```bash
-find_command [-k | -c] <término>
+find_command [ -l | -k | -c] <término>
 ```
 
 | Flag | Descripción |
 |------|-------------|
+|  -l  | Lista todos los servicios y paquetes |
 |  -k  | Busca por título en el índice (ej: `"SSH"`, `"nmap"`) |
 |  -c  | Busca apariciones en el documento |
 

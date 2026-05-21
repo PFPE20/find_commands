@@ -83,11 +83,18 @@ function search_cmd() {
 
 }
 
+function list_cmds() {
+
+	grep -P "^-{3,}" "$notes_file" -A 2 | grep -o '"[^"]*"' | tr -d '"' | less
+
+}
+
 function usage() {
 	
 	echo -e "\n\tUso:"
-	echo -e "\n\t\t\e[1;34msearchcommands\e[0m \e[1;37m-c\e[0m \e[3m<command>\e[0m → Encuentra las apariciones en el documento"
-	echo -e "\n\t\t\e[1;34msearchcommands\e[0m \e[1;37m-k\e[0m \e[3m<command>\e[0m → Busca un comando por su título\n"
+	echo -e "\t\t\e[1;34msearchcommands\e[0m \e[1;37m-l\e[0m → Lista todos los paquetes y servicios"
+	echo -e "\t\t\e[1;34msearchcommands\e[0m \e[1;37m-c\e[0m \e[3m<command>\e[0m → Encuentra las apariciones en el documento"
+	echo -e "\t\t\e[1;34msearchcommands\e[0m \e[1;37m-k\e[0m \e[3m<command>\e[0m → Busca un comando por su título\n"
 
 	return 1
 
@@ -99,7 +106,7 @@ fi
 
 
 
-while getopts ":c:k:" opt; do
+while getopts ":c:k:l" opt; do
 	case $opt in
 		k) 
 			if ! grep -qi "$OPTARG" "$notes_file"; then
@@ -114,6 +121,8 @@ while getopts ":c:k:" opt; do
 				exit 1
 			fi
 			search_cmd $OPTARG; exit 0;;
+		l)
+			list_cmds; exit 0;;
 		?) usage; exit 0;;
 	esac
 done

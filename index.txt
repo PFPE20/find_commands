@@ -1023,7 +1023,7 @@ En contexto de seguridad es interesante porque históricamente ha tenido configu
 
 ---------------------------------------------------------------------------------
 
-	"RECOMENDACIONES"
+	RECOMENDACIONES
 
 1. Siempre revisar los "cronjob" de las máquinas.
 
