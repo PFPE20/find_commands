@@ -6,12 +6,13 @@ Herramienta de la shell para buscar rápidamente en un índice personal de coman
 
 ## ¿Por qué existe esta herramienta?
 
-Cuando estoy practicando en plataformas como **TryHackme** y **PicoCTF**, acumulo comandos, flags y flujos de trabajo que necesito consultar frecuentemente. En lugar de buscar en internet cada vez, mantengo un `index.txt` con mis propias notas y este script me permite consultarlo directamente desde la terminal.
+Cuando estoy practicando en plataformas como **TryHackme** y **OverTheWire**, acumulo comandos, flags y flujos de trabajo que necesito consultar frecuentemente. En lugar de buscar en internet cada vez, mantengo un `index.txt` con mis propias notas y este script me permite consultarlo directamente desde la terminal.
 
 ---
 
 ## Características
 
+- Lista todos los **paquetes** y **servicios** disponibles (`-l`)
 - Búsqueda por **título** de herramienta o protocolo (`-k`)
 - Búsqueda por **comando** o **aparición** en el documento (`-c`)
 - Extrae el **bloque completo** de notas delimitado por separadores
