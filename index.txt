@@ -39,27 +39,41 @@
 
 	echo '75 74 73 ...' | python3 -c 'import sys; print(''.join(chr(int(i)) for i in sys.stdin.read().split()))'
 
-4. Transformar URI chars:
+4. HEX:
+
+	Decodificar:
+
+		python3 -c 'print(bytes.fromhex("<HEX>").decode("latin-1"))'
+
+	Codificar:
+
+		python3 -c 'print("<ASCII>.encode.hex()")'
+
+	Ver bytes en INT:
+
+		python3 -c 'print(int("<HEX>", 16))'
+
+5. Transformar URI chars:
 
 	python3 -c 'import urllib.parse; print(urllib.parse.unquote(<enter the input>))'
 
-5. Desencriptar un XOR encrypted:
+6. Desencriptar un XOR encrypted:
 
 	python3 -c 'print("".join(chr(b ^ [HEX]) for b in <encrypted>))'
 
-6. Generar shell:
+7. Generar shell:
 
 	python3 -c 'import pty; pty.spawn("/bin/bash")'
 
 	python3.8 -c 'import os; os.setuid(0); os.system("/bin/bash")'
 
-7. Template Injection | Flask:
+8. Template Injection | Flask:
 
 	• {{ self.__init__.__globals__.__builtins__.__import__('os').popen('ls').read() }}
 
 	• "poppen('command')": command		→ se puede usar para los comandos de la shell
 
-8. File decompression
+9. File decompression
 
    -- BINARIES --
 
@@ -68,7 +82,7 @@
 		- hex: after examine the file with "binwalk" it'll show the hexadecimal where is located the
 		hidden file
 
- 		- To read and write binaries is necessary to indicate the flags: 
+		- To read and write binaries is necessary to indicate the flags: 
 
 			"rb" → Read Binary
 			"wb" → Write Binary
@@ -156,6 +170,22 @@
 	"capabilities" - "getcap"
 
 1. Investigar
+
+----------------------------------------------------------------------------------
+
+	"mysql"
+
+1. Algunos flags:
+
+	-u: username
+
+	-h: host
+
+	-p: password (require)
+
+	-P: port
+
+	--skip-ssl: no usar certificado SSL
 
 ----------------------------------------------------------------------------------
 
