@@ -5,7 +5,9 @@
 # Script para buscar comando en index.txt
 
 separator="^-{3,}"
-notes_file="$HOME/myscripts/findCommandsGit/index.txt"
+
+rpath=$( dirname $( realpath "$0" ) )
+notes_file="$rpath/index.txt"
 
 size=($(stty size))
 rows=${size[0]}
