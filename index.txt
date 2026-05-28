@@ -780,6 +780,10 @@ msfconsole                          msfvenom
 		• -text		→ muestra los componentes en formato legible
 		• -noout	→ no imprime en Base64, sólo texto. 
 
+5. Conectarse a un servicio con un certificado .crt (mTLS):
+  
+  openssl s_client -connect <IP>:<PORT> -cert <cert-name>.crt -key <key-name>.key
+
 ---------------------------------------------------------------------------------
 
 	"grep"
