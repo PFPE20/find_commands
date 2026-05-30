@@ -624,6 +624,24 @@ msfconsole                          msfvenom
 
 ----------------------------------------------------------------------------------
 
+  "objdump"
+
+Objdump es una herramienta de línea de comandos (parte de GNU Binutils) utilizada para inspeccionar y analizar archivos objeto, bibliotecas y ejecutables compilados.  Su función principal es desensamblar código a lenguaje ensamblador y extraer metadatos internos del binario, facilitando el desarrollo, depuración y análisis de seguridad. 
+
+Sintaxis Básica
+objdump [OPCIONES] [ARCHIVO]
+
+  -d o --disassemble: Desensambla las secciones de código ejecutable. Permite especificar un símbolo concreto (ej. objdump -d _main). 
+  -D o --disassemble-all: Desensambla todas las secciones, incluyendo las que no son estrictamente de código, útil para analizar datos crudos o secciones de reubicación. 
+  -h o --section-headers: Muestra los encabezados de las secciones del archivo (tamaño, dirección virtual, tipo), equivalente a ls -l para archivos objeto. 
+  -x o --all-headers: Muestra toda la información disponible simultáneamente: encabezados de archivo, secciones, símbolos y reubicaciones. 
+  -t o --syms: Lista la tabla de símbolos globales y locales del binario. 
+  -S o --source: Intercala el código fuente original con el código desensamblado (requiere que el binario se haya compilado con información de depuración, -g). 
+  -M intel: Cambia la sintaxis del ensamblador de AT&T (predeterminada) a Intel, que es más común en Windows y documentación moderna.
+  -R o --dynamic-reloc: Muestra la GOT, las direcciones de funciones externas que el binario llama
+
+----------------------------------------------------------------------------------
+
 	"xfreerdp"
 
 1. xfreerdp es la implementación por línea de comandos del protocolo RDP (Remote Desktop Protocol) más utilizada en sistemas basados en Linux (como Kali). Forma parte del proyecto FreeRDP. Permite el acceso remoto a entornos Windows desde máquinas Linux, emulando la experiencia de escritorio completa.
