@@ -53,6 +53,14 @@
 
 		python3 -c 'print(int("<HEX>", 16))'
 
+  Obtener HEX (se pueden hacer operaciones matemáticas):
+
+    python3 -c 'print(f"{<NUM>:Nx}")'
+
+    - <NUM>: Aquí sería un número, operación matemática que querramos convertir a hexadecimal
+
+    - N: La cantidad/longitud del Hex
+
 5. Transformar URI chars:
 
 	python3 -c 'import urllib.parse; print(urllib.parse.unquote(<enter the input>))'
