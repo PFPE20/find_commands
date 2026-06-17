@@ -670,6 +670,34 @@ readelf [OPCIONES] [ARCHIVO]
 
 ----------------------------------------------------------------------------------
 
+  "checksec"
+
+Checksec es una herramienta (existe como script standalone checksec.sh, y también integrada como comando dentro de pwntools, que es la versión más común en Kali) que analiza un binario y reporta de forma resumida qué mitigaciones de seguridad tiene activadas. A diferencia de objdump y readelf, no se usa para explorar el binario en profundidad, sino para tener de un vistazo qué protecciones existen, lo cual te dice de entrada qué tipo de ataque es viable (por ejemplo, si la GOT es atacable o no, antes de perder tiempo intentando un overwrite).
+
+Sintaxis Básica
+checksec --file=ARCHIVO
+
+En la versión de pwntools (la más usada en entornos CTF):
+checksec ARCHIVO
+
+A diferencia de objdump/readelf, checksec no tiene muchas flags propias, su valor está en los campos que reporta en la salida. Esos campos son lo importante a entender:
+
+  RELRO: Indica si la GOT es de solo lectura tras la carga. No RELRO significa GOT totalmente escribible (muy vulnerable). Partial RELRO significa que la sección .got.plt sigue siendo escribible mientras se usa lazy binding (vulnerable a overwrite). Full RELRO significa que toda la GOT se resuelve al inicio y luego se marca como solo lectura, bloqueando la técnica de GOT overwrite por completo.
+
+  Stack Canary (Stack protector): Indica si el binario coloca un valor aleatorio justo antes de la dirección de retorno en el stack, para detectar overflows antes de que sobrescriban el RIP/EIP. Si dice "No canary found", un buffer overflow en stack puede sobrescribir el retorno sin que nada lo detecte.
+
+  NX (No-eXecute) / GNU_STACK: Indica si el stack está marcado como no ejecutable. Si dice NX enabled, no puedes meter shellcode en el stack y saltar ahí directamente, hay que recurrir a técnicas como ROP. Si dice NX disabled, sí puedes ejecutar shellcode metido en el stack.
+
+  PIE (Position Independent Executable): Indica si el binario se carga en una dirección base aleatoria en cada ejecución (igual que las bibliotecas con ASLR). Si está activado, no puedes hardcodear direcciones del propio binario sin antes conseguir un leak. Si dice "No PIE", las direcciones del binario son fijas y conocidas de antemano, lo cual facilita mucho el ataque.
+
+  RPATH / RUNPATH: Indica si el binario tiene rutas de búsqueda de bibliotecas embebidas. Si existen y son escribibles, se pueden explotar para técnicas de library hijacking, cargando una .so maliciosa en lugar de la legítima.
+
+  Symbols: Indica si el binario conserva la tabla de símbolos o está "stripeado". Si dice "No Symbols", es más difícil identificar funciones por nombre y hay que trabajar más con direcciones crudas y patrones de código.
+
+  FORTIFY: Indica si se compiló con _FORTIFY_SOURCE, que reemplaza funciones inseguras (strcpy, sprintf, etc.) por versiones con chequeos de límites (__strcpy_chk y similares). Si está activo, ciertos overflows simples son detectados en tiempo de ejecución y el programa aborta en vez de seguir corriendo de forma explotable.
+
+----------------------------------------------------------------------------------
+
 	"xfreerdp"
 
 1. xfreerdp es la implementación por línea de comandos del protocolo RDP (Remote Desktop Protocol) más utilizada en sistemas basados en Linux (como Kali). Forma parte del proyecto FreeRDP. Permite el acceso remoto a entornos Windows desde máquinas Linux, emulando la experiencia de escritorio completa.
