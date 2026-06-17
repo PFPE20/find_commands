@@ -647,6 +647,26 @@ objdump [OPCIONES] [ARCHIVO]
   -S o --source: Intercala el código fuente original con el código desensamblado (requiere que el binario se haya compilado con información de depuración, -g). 
   -M intel: Cambia la sintaxis del ensamblador de AT&T (predeterminada) a Intel, que es más común en Windows y documentación moderna.
   -R o --dynamic-reloc: Muestra la GOT, las direcciones de funciones externas que el binario llama
+  -j <NOMBRE> o --section=<NOMBRE>: Limita la operación (ya sea --disassemble, -s, etc.) a una sección específica del binario en vez de procesar el archivo completo. Es muy útil para enfocar el análisis, por ejemplo objdump -d -j .plt binario te desensambla solo el PLT, o objdump -s -j .got.plt binario te vuelca en hexadecimal el contenido crudo de la GOT. Se puede repetir la flag para incluir varias secciones en una sola pasada.
+
+----------------------------------------------------------------------------------
+
+  "readelf"
+
+Readelf es otra herramienta de GNU Binutils, enfocada exclusivamente en archivos ELF (a diferencia de objdump, que también soporta otros formatos). Su función principal es mostrar la estructura interna del ELF de forma directa y estructurada, ideal para entender el layout del binario, las secciones, los segmentos de carga y las relocations, todo esto fundamental para análisis de seguridad y mitigaciones (RELRO, PIE, etc.).
+
+Sintaxis Básica
+readelf [OPCIONES] [ARCHIVO]
+
+  -h o --file-header: Muestra la cabecera ELF: tipo de archivo (ejecutable, compartido/PIE, etc.), arquitectura, punto de entrada y otros metadatos generales. Es el primer comando para saber con qué tipo de binario estás trabajando.
+  -l o --program-headers / --segments: Muestra los segmentos de carga (program headers), es decir, cómo se mapea el binario en memoria al ejecutarse. Aquí también aparece el segmento GNU_RELRO, clave para saber si la GOT es de solo lectura o no.
+  -S o --section-headers / --sections: Lista las secciones del binario con sus direcciones, tamaños y flags. Equivalente a objdump -h, pero con formato readelf.
+  -r o --relocs: Muestra la tabla de relocations, es decir, qué símbolo corresponde a qué entrada de la GOT/PLT. Da directamente el mapeo símbolo-dirección sin tener que desensamblar nada.
+  -d o --dynamic: Muestra la sección dinámica, donde aparecen las dependencias de bibliotecas y flags como BIND_NOW (si está presente, indica Full RELRO).
+  -s o --syms / --symbols: Lista la tabla de símbolos, similar a objdump -t.
+  -x <SECCION> o --hex-dump=<SECCION>: Vuelca en hexadecimal el contenido crudo de una sección específica, útil para inspeccionar la GOT directamente como bytes.
+  -a o --all: Muestra toda la información disponible de una sola vez (equivalente combinado a -h -l -S -r -d -s y más).
+  -W o --wide: Fuerza salida en formato ancho, evitando que las líneas largas se trunquen o corten, recomendable casi siempre que uses cualquiera de las flags anteriores.
 
 ----------------------------------------------------------------------------------
 
