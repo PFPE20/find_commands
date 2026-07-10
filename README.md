@@ -2,20 +2,29 @@
 
 Herramienta de la shell para buscar rápidamente en un índice personal de comandos, herramientas y protocolos usados en ciberseguridad.
 
---- 
+---
+
+## Actualización
+
+Tras un largo tiempo de uso de esta herramienta he decidido hacer una actualización para mejorar la legibilidad del [índice](./index.yaml), llevándolo de `.txt` a `.yaml` usando la herramienta `yq`.
+
+* Ahora puedes filtrar por categorías de herramientas.
+
+---
 
 ## ¿Por qué existe esta herramienta?
 
-Cuando estoy practicando en plataformas como **TryHackme** y **OverTheWire**, acumulo comandos, flags y flujos de trabajo que necesito consultar frecuentemente. En lugar de buscar en internet cada vez, mantengo un `index.txt` con mis propias notas y este script me permite consultarlo directamente desde la terminal.
+Cuando estoy practicando en plataformas como **TryHackme** y **OverTheWire**, acumulo comandos, flags y flujos de trabajo que necesito consultar frecuentemente. En lugar de buscar en internet cada vez, mantengo un `index.yaml` con mis propias notas y este script me permite consultarlo directamente desde la terminal.
 
 ---
 
 ## Características
 
+- Panel de ayuda: (`-h`)
 - Lista todos los **paquetes** y **servicios** disponibles (`-l`)
-- Búsqueda por **título** de herramienta o protocolo (`-k`)
 - Búsqueda por **comando** o **aparición** en el documento (`-c`)
-- Extrae el **bloque completo** de notas delimitado por separadores
+- Búsqueda por **título** de herramienta o protocolo (`-k`)
+- Búsqueda de **programas** o **servicios** por categoría (`-a`) (*¡NUEVA FUNCIONALIDAD! - Las categorías están listadas en la ayuda*)
 - Validación de argumentos y mensajes de error según sea el caso
 
 ---
@@ -42,7 +51,7 @@ findcommands='ruta/al/script'
 ## Uso
 
 ```bash
-find_command [ -l | -k | -c] <término>
+find_command [ -l | -k | -c | -h | -a] <término>
 ```
 
 | Flag | Descripción |
@@ -50,6 +59,8 @@ find_command [ -l | -k | -c] <término>
 |  -l  | Lista todos los servicios y paquetes |
 |  -k  | Busca por título en el índice (ej: `"SSH"`, `"nmap"`) |
 |  -c  | Busca apariciones en el documento |
+|  -a  | Busca por categoría |
+|  -h  | Muestra la ayuda |
 
 
 ### Ejemplos
@@ -64,37 +75,6 @@ find_commands -c john
 
 ---
 
-## Formato del índice (`index.txt`)
-
-El script espera que las notas estén organizadas por bloques separados por líneas de guiones (`---` o más):
-
-```
-----------------------------------------------------------------------------------
-
-        "SSH" (Protocolo - Puerto 22)
-
-1. Ya sabemos cómo entrar por el puerto 22 del protocolo SSH, sin embargo también hay una alternativa estando dentro de la máquina:
-
-        ssh usuario@ip-de-la-máquina
-
-2. Para ingresar con una clave rsa:
-
-        ssh -i id_rsa user@IP
-
-3. Para crackear una clave RSA:
-
-        ssh2john file_rsa > rsa.hash
-
-        luego:
-
-        john --wordlist=/path/to/rockyou > rsa.cracked
-
-----------------------------------------------------------------------------------
-```
-
-
----
-
 ## Estructura del proyecto:
 
 ```
@@ -105,12 +85,10 @@ find_commands/
 
 ### Recomendaciones
 
-Si deseas agregar más bloques:
+Intenta mantener el formato del `.yaml` para que no ocurran errores con la búsqueda. La información que aportes será totalmente de tu criterio.
 
-- Intenta utilizar sólo comillas dobles (`"`) para los títulos, el resto puedes usar comillas simples (`'`)
-- El espacio antes del título del bloque puede hacerse con un tabulado
-
-- IMPORTANTE: Siéntanse libres de usarla y modificarla a su gusto
+>[!TIP]
+>Siéntanse libres de usarla y modificarla a su gusto
 
 ---
 
