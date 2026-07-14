@@ -70,6 +70,13 @@
 
 - tool: python
   category: encoding
+  tags: [hex, encode, int]
+  description: "Codificar int a hex"
+  command: |
+    python3 -c 'print(hex(INT))' | python3 -c 'print(f"0x{INT:nX}")'
+
+- tool: python
+  category: encoding
   tags: [hex, int]
   description: "Ver bytes hex como entero"
   command: |
