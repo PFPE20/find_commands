@@ -21,7 +21,7 @@ function search_pkg() {
 
   FIND_PKG=$(PKG="$PKG" yq -r '.[] | select(.tool == env(PKG)) | "\t\(.description)\n  \(.command)\n"' "$IDX_FILE")
 
-  if ! echo "$LIST_TOOLS" | grep -qi "$FIND_PKG"; then
+  if ! echo "$LIST_TOOLS" | grep -qi "$PKG"; then
     echo -e "\n\t\e[1;33m[!]\e[0m paquete/servicio/protocolo no encontrado\n"
   fi
 

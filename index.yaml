@@ -169,8 +169,9 @@
       -d                            # usa el modo "debug"
       -v                            # verbose
       -nv                           # no verbose
+      -c                            # Continúa una descarga desde donde se dejó
       -i FILE                       # lee la URL desde un archivo especificado
-      -t NUM                        # asigna número de intentos de descarga, "inf" hace intentos infinitos, las excepciones son fatal errors como "connection refused" o "not found" (404) estos no serán reintentados
+      -t NUM | --tries=N            # asigna número de intentos de descarga, "inf" o "0" hace intentos infinitos, las excepciones son fatal errors como "connection refused" o "not found" (404) estos no serán reintentados
       -O FILE                       # Nombre del archivo donde se guardará lo que se desee descargar
       -S                            # respuesta del servidor enviada por HTTP o FTP
       -T NUM                        # timeout en segundos
@@ -189,8 +190,10 @@
       --compression=type            # Elige el tipo de compresión del archivo a descargar
       --max-redirect=number         # Especifica el número de redirecciones
       --secure-protocol=protocol    # Especifica el tipo de protocolo seguro (TLS/SSL)
+      --retry-connrefused           # Considera "connection refused" un error transitorio e intenta de nuevo. Bueno para acompañar con "--tries=0" hace intentos infinitos de descarga.
   command: |
     wget FLAGS URL
+    wget --tries=0 --retry-connrefused <URL> # Buen comando para descargas que se puedan pausar. En caso de pausarse se puede usar el mismo comando con el flag "-c" para reanudar.
 
 - tool: curl
   category: utility
@@ -609,6 +612,26 @@
   command: |
     tar -xf archivo.tar
 
+- tool: tar
+  category: utility
+  tags: [compression, extraction, archive]
+  description: "Transferir y recibir comprimidos mediante nc u otros"
+  command: |
+    Transferir
+    tar -czvf - /ruta/al/directorio | nc <IP> <PORT>
+      -c: Crea un nuevo archivo.
+      -z: Archiva a través de gzip
+      -v: Verbose, lista los archivos procesados
+      -f: File|Archivo
+      - -: El guión indica a tar que use el in/out predeterminado en lugar de crear un archivo en el disco duro.
+    Recibir
+    nc -lp 3000 | tar -xzvf -
+      -x: Extract
+      -z: Extraer gzip
+      -v: Verbose
+      -f: File|Archivo
+      - -: Le indica a tar que use el in/out predeterminado
+
 - tool: unzip
   category: utility
   tags: [compression, extraction, zip]
@@ -770,3 +793,10 @@
     KEYS *                          # Listar de forma explícita todas las claves residentes en el espacio activo
     GET [key]                       # Extraer de forma directa el valor almacenado en una clave concreta
     TYPE [key]                      # Validar la tipología del valor de la clave analizada
+
+- tool: extra
+  category: extra
+  tags: [extra]
+  description: "Herramientas útiles alternativas"
+  command: |
+     printf '52:54:00:%02x:%02x:%02x\n' $((RANDOM%256)) $((RANDOM%256)) $((RANDOM%256))
