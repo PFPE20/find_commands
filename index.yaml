@@ -156,6 +156,20 @@
   command: |
     nc -nlvp [PUERTO]
 
+- tool: nc
+  category: network
+  tags: [listener, shell, exploitation]
+  description: "Recibir un archivo mediante redes"
+  command: |
+    nc -lp <PORT> > file.ext
+
+- tool: nc
+  category: network
+  tags: [listener, shell, exploitation]
+  description: "Enviar un archivo mediante redes"
+  command: |
+    nc <IP> <PORT> < file.ext
+
 - tool: wget
   category: utility
   tags: [download, sudo, privesc, etc-password]
@@ -181,7 +195,8 @@
       --ignore-case                 # Ignora las mayúsculas/minusculas en archivos y directorios.
       -I LIST                       # Lista de directorios que se quieren seguir separados por comas.
       -X LIST                       # Lo contrario a -I, excluye los que estén mencionados en la lista separados por comas.
-      -nd                           # No crea una jerarquía de directorios cuando se descarga de forma recursiva
+      -nd | --no-directories        # No crea una jerarquía de directorios cuando se descarga de forma recursiva
+      -np | --no-parent             # No asciende en la jerarquía de directorios. 
       -x                            # Lo contrario de "-nd"
       --no-cache                    # Deshabilita la caché del servidor. En este caso wget enviará las directivas correspondientes para desactivarlos.
       --no-cookies                  # Desactiva el uso de cookies
@@ -315,28 +330,28 @@
   description: |
     Analizador de paquetes por línea de comandos más clásico, ligero y veterano del mundo Linux. Su función principal es capturar y volcar el tráfico de red que pasa por una interfaz. Es una herramienta de bajo nivel
     Algunos flags:
-      -A                            # Imprime cada paquetes (menos su header de enlace) en ASCII, útil para capturar páginas web.
-      -c NUM                        # Sale después de contar NUM packets.
-      -D, --list-interfaces         # Lista las interfaces de red disponibles.
-      -e                            # Imprime el nivel de enlace de la cabecera en cada linea.
+      -A                                  # Imprime cada paquetes (menos su header de enlace) en ASCII, útil para capturar páginas web.
+      -c NUM                              # Sale después de contar NUM packets.
+      -D, --list-interfaces               # Lista las interfaces de red disponibles.
+      -e                                  # Imprime el nivel de enlace de la cabecera en cada linea.
       -i INTERFACE, --interface=INTERFACE # Escucha la interfaz asignada en INTERFACE
-      -I, --monitor-mode            # Modo monitor. Configura la tarjeta Wi-Fi en modo escucha pasiva para capturar todo el tráfico que viaja por el aire en ese canal, sin importar a qué dispositivo pertenece.
-      --inmediate-mode              # Los paquetes son impresos una vez recibidos, no se almacenarán en búfer, útil cuando queremos imprimir todo directo en la terminal y no almacenar en un archivo.
-      -l                            # Sirve para activar el búfer de salida instantánea por líneas. Por defecto cuando se manda la salida de tcpdump a otro canal o archivo se acumulan los paquetes en memoria (búfer) antes de escribirlos. Esto hace que la salida sea inmediata, es útil para filtrar.
-      -n                            # Desactiva la resolución de nombres (DNS) y muestra las direcciones de IP puras.
-      -#, --number                  # Imprime los números de paquete al inicio de la línea.
-      --print                       # Sirve para imprimir la salida de los paquetes en la CLI, incluso si se está capturando el tráfico y guardando en un archivo con "-w".
+      -I, --monitor-mode                  # Modo monitor. Configura la tarjeta Wi-Fi en modo escucha pasiva para capturar todo el tráfico que viaja por el aire en ese canal, sin importar a qué dispositivo pertenece.
+      --inmediate-mode                    # Los paquetes son impresos una vez recibidos, no se almacenarán en búfer, útil cuando queremos imprimir todo directo en la terminal y no almacenar en un archivo.
+      -l                                  # Sirve para activar el búfer de salida instantánea por líneas. Por defecto cuando se manda la salida de tcpdump a otro canal o archivo se acumulan los paquetes en memoria (búfer) antes de escribirlos. Esto hace que la salida sea inmediata, es útil para filtrar.
+      -n                                  # Desactiva la resolución de nombres (DNS) y muestra las direcciones de IP puras.
+      -#, --number                        # Imprime los números de paquete al inicio de la línea.
+      --print                             # Sirve para imprimir la salida de los paquetes en la CLI, incluso si se está capturando el tráfico y guardando en un archivo con "-w".
       -Q DIRECTION, --direction=DIRECTION # Sirve para filtrar el tráfico según la dirección del flujo de los paquetes, permitiéndole elegir si sólo debe capturar lo que entra, sale o ambos. "in - out - inout"
-      -q                            # Modo quiet, reduce la cantidad de información técnica que se muestra en la pantalla por cada paquete limitándose a los datos esenciales, es bueno para optimizar el rendimiento.
-      -r FILE                       # Lee paquetes desde FILE que ha sido creado previamente con "-w" u otras herramientas que han escrito archivos pcap o pcapng.
-      -t                            # No imprime timestamp en cada línea de volcado.
-      -tt                           # Imprime timestamp en cada línea de volcado.
-      -v                            # Verbose, se puede aumentar hasta 3.
-      -w FILE                       # Escribe el output en el archivo FILE Especificado.
-      -x                            # Cuando se parsea e imprime, además de imprimir los headers de cada paquete, imprime los datos de cada uno en HEX. No contempla el nivel de enlace.
-      -xx                           # Lo mismo que "-x" pero SI contempla el nivel de enlace.
-      -X                            # Lo mismo que "-x" pero imprime HEX y ASCII, no contempla la capa de enlace.
-      -XX                           # Lo mismo que "-X", contempla la capa de enlace.
+      -q                                  # Modo quiet, reduce la cantidad de información técnica que se muestra en la pantalla por cada paquete limitándose a los datos esenciales, es bueno para optimizar el rendimiento.
+      -r FILE                             # Lee paquetes desde FILE que ha sido creado previamente con "-w" u otras herramientas que han escrito archivos pcap o pcapng.
+      -t                                  # No imprime timestamp en cada línea de volcado.
+      -tt                                 # Imprime timestamp en cada línea de volcado.
+      -v                                  # Verbose, se puede aumentar hasta 3.
+      -w FILE                             # Escribe el output en el archivo FILE Especificado.
+      -x                                  # Cuando se parsea e imprime, además de imprimir los headers de cada paquete, imprime los datos de cada uno en HEX. No contempla el nivel de enlace.
+      -xx                                 # Lo mismo que "-x" pero SI contempla el nivel de enlace.
+      -X                                  # Lo mismo que "-x" pero imprime HEX y ASCII, no contempla la capa de enlace.
+      -XX                                 # Lo mismo que "-X", contempla la capa de enlace.
   command: |
     tcpdump <FLAGS>
 
